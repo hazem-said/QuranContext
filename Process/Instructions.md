@@ -190,8 +190,8 @@
 ```json
 {
   "commit": {
-    "message": "Add stage-three detail file for Surah An-Nahl.",
-    "body": "Based on chat analysis of verses 51-67. Covers the narrowing of proof circles from cosmos to body, and the transition into the khuruj motif."
+    "message": "إضافة تفصيل المرحلة الثالثة من سورة النحل.",
+    "body": "بناءً على تحليل الآيات ٥١-٦٧. تغطي تضييق دائرة البرهان من الكون إلى الجسد، والانتقال إلى محور الخروج من البطون."
   },
   "changes": [
     {
