@@ -11,8 +11,8 @@
 **https://github.com/hazem-said/QuranContext/**
 
 تحديداً:
-- محتوى مجلد السورة المعنية: `Content/<surah-id>-<surah-name>/`
-- ملف المدخل: `01-مدخل-السورة.md` (إن وُجد)
+- محتوى مجلد السورة المعنية: `Content/<surah-id>-<surah-name-in-english>/`
+- ملف المدخل: `01-surah-intro.md` (إن وُجد)
 - ملفات المراحل الموجودة مسبقاً
 
 هذا يضمن أن النقاش يبني على ما هو موجود فعلاً، لا من الصفر.
@@ -168,27 +168,27 @@
   "changes": [
     {
       "action": "add",
-      "path": "Content/016-النحل/new-file.md",
+      "path": "Content/016-an-nahl/new-file.md",
       "content": "محتوى الملف الجديد كاملاً كنص..."
     },
     {
       "action": "modify",
-      "path": "Content/016-النحل/existing-file.md",
+      "path": "Content/016-an-nahl/existing-file.md",
       "content": "المحتوى الجديد الكامل للملف بعد التعديل..."
     },
     {
       "action": "delete",
-      "path": "Content/016-النحل/old-file.md"
+      "path": "Content/016-an-nahl/old-file.md"
     },
     {
       "action": "rename",
-      "from": "Content/016-النحل/old-name.md",
-      "to": "Content/016-النحل/new-name.md"
+      "from": "Content/016-an-nahl/old-name.md",
+      "to": "Content/016-an-nahl/new-name.md"
     },
     {
       "action": "rename",
-      "from": "Content/016-النحل/old-name.md",
-      "to": "Content/016-النحل/new-name.md",
+      "from": "Content/016-an-nahl/old-name.md",
+      "to": "Content/016-an-nahl/new-name.md",
       "content": "محتوى جديد اختياري إذا تغير المحتوى مع إعادة التسمية"
     }
   ]
@@ -223,7 +223,7 @@
   "changes": [
     {
       "action": "add",
-      "path": "Content/016-النحل/04-المرحلة-الثالثة-(٥١-٦٧)-تفصيل.md",
+      "path": "Content/016-an-nahl/04-stage-3-(51-67).md",
       "content": "# المرحلة الثالثة (٥١-٦٧)\n\n## الوحدة الأولى\n\n..."
     },
     {
