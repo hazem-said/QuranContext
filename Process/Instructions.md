@@ -123,6 +123,93 @@
 
 ---
 
+---
+
+## صيغة Commit JSON — توليد التغييرات للإرسال لـ GitHub
+
+بعد الانتهاء من النقاش وإقرار المحتوى، يُطلب من الذكاء الاصطناعي توليد **Commit JSON** بالصيغة التالية تماماً.
+يُنسخ هذا الـ JSON ويُلصق في أداة `index.html` لإرساله مباشرة إلى GitHub.
+
+### الصيغة الكاملة
+
+```json
+{
+  "commit": {
+    "message": "عنوان الكوميت في سطر واحد",
+    "body": "وصف اختياري أطول يشرح سياق التغيير أو ملخص النقاش"
+  },
+  "changes": [
+    {
+      "action": "add",
+      "path": "Content/016-النحل/new-file.md",
+      "content": "محتوى الملف الجديد كاملاً كنص..."
+    },
+    {
+      "action": "modify",
+      "path": "Content/016-النحل/existing-file.md",
+      "content": "المحتوى الجديد الكامل للملف بعد التعديل..."
+    },
+    {
+      "action": "delete",
+      "path": "Content/016-النحل/old-file.md"
+    },
+    {
+      "action": "rename",
+      "from": "Content/016-النحل/old-name.md",
+      "to": "Content/016-النحل/new-name.md"
+    },
+    {
+      "action": "rename",
+      "from": "Content/016-النحل/old-name.md",
+      "to": "Content/016-النحل/new-name.md",
+      "content": "محتوى جديد اختياري إذا تغير المحتوى مع إعادة التسمية"
+    }
+  ]
+}
+```
+
+### قيم `action` المتاحة
+
+| action | الوصف |
+|--------|-------|
+| `add` | إنشاء ملف جديد — يتطلب `path` و`content` |
+| `modify` | تعديل ملف موجود — يتطلب `path` و`content` |
+| `delete` | حذف ملف — يتطلب `path` فقط |
+| `rename` | إعادة تسمية ملف — يتطلب `from` و`to` (و`content` اختياري إذا تغير المحتوى) |
+
+### قواعد مهمة
+
+- `content` يُكتب كنص كامل مع `\n` للأسطر الجديدة
+- لا تستخدم `...` في المحتوى — الملف يُكتب كاملاً دائماً
+- `commit.message` سطر واحد موجز
+- `commit.body` يمكن أن يحتوي ملخص النقاش أو سبب التغيير
+- يمكن جمع تغييرات متعددة في كوميت واحد
+
+### مثال كامل
+
+```json
+{
+  "commit": {
+    "message": "Add stage-three detail file for Surah An-Nahl.",
+    "body": "Based on chat analysis of verses 51-67. Covers the narrowing of proof circles from cosmos to body, and the transition into the khuruj motif."
+  },
+  "changes": [
+    {
+      "action": "add",
+      "path": "Content/016-النحل/04-المرحلة-الثالثة-(٥١-٦٧)-تفصيل.md",
+      "content": "# المرحلة الثالثة (٥١-٦٧)\n\n## الوحدة الأولى\n\n..."
+    },
+    {
+      "action": "modify",
+      "path": "Content/README.md",
+      "content": "# Content Structure\n\n..."
+    }
+  ]
+}
+```
+
+---
+
 ## مثال على طلب محدد
 
 ```

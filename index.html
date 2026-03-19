@@ -6,9 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Quran Context" />
-<title>Quran Context — AI Editor</title>
+<title>Quran Context — Commit Tool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
     --ink: #1a1208;
@@ -22,10 +22,9 @@
     --teal-dim: #1a4040;
     --cream: #faf7f0;
     --red-accent: #8b2e2e;
+    --green: #2d6b45;
+    --green-light: #4a9970;
     --shadow: rgba(26,18,8,0.15);
-    --panel-bg: rgba(245,240,232,0.97);
-    --chat-user: #2d4a6b;
-    --chat-ai: #2d5a4a;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -70,73 +69,48 @@
     flex-shrink: 0;
     gap: 12px;
   }
-  .logo {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon {
     width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--gold), var(--gold-dim));
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Amiri', serif;
-    font-size: 18px; color: var(--ink);
-    font-weight: 700;
-    flex-shrink: 0;
+    font-size: 18px; color: var(--ink); font-weight: 700; flex-shrink: 0;
   }
   .logo-text { flex: 1; min-width: 0; }
-  .logo-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 16px; color: var(--gold-light);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .logo-sub {
-    font-size: 10px; color: rgba(201,168,76,0.5);
-    letter-spacing: 1px; text-transform: uppercase;
-  }
+  .logo-title { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--gold-light); white-space: nowrap; }
+  .logo-sub { font-size: 10px; color: rgba(201,168,76,0.5); letter-spacing: 1px; text-transform: uppercase; }
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn-icon {
     width: 34px; height: 34px;
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 8px;
-    color: var(--gold);
-    font-size: 16px;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px; color: var(--gold); font-size: 16px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     transition: all 0.2s;
   }
   .btn-icon:hover { background: rgba(201,168,76,0.2); }
 
-  /* === MAIN PANELS === */
-  .main {
-    display: flex; flex: 1; overflow: hidden; gap: 0;
-  }
+  /* === MAIN === */
+  .main { display: flex; flex: 1; overflow: hidden; }
 
   /* === SIDEBAR === */
   .sidebar {
-    width: 260px; flex-shrink: 0;
+    width: 250px; flex-shrink: 0;
     background: rgba(10,8,4,0.9);
     border-right: 1px solid rgba(201,168,76,0.15);
     display: flex; flex-direction: column;
     transition: transform 0.3s ease;
     overflow: hidden;
   }
-  .sidebar.collapsed { transform: translateX(-260px); width: 0; }
+  .sidebar.collapsed { transform: translateX(-250px); width: 0; }
 
-  .sidebar-header {
-    padding: 14px 16px 10px;
-    border-bottom: 1px solid rgba(201,168,76,0.1);
-  }
-  .sidebar-title {
-    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: rgba(201,168,76,0.5); margin-bottom: 10px;
-  }
+  .sidebar-header { padding: 14px 16px 10px; border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .sidebar-title { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(201,168,76,0.5); margin-bottom: 10px; }
   .repo-info {
-    background: rgba(201,168,76,0.07);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 8px; padding: 8px 10px;
-    font-size: 12px; color: var(--gold-light);
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
+    background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--gold-light);
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
   }
   .repo-info:hover { background: rgba(201,168,76,0.12); }
   .repo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
@@ -146,15 +120,12 @@
   .file-list::-webkit-scrollbar { width: 4px; }
   .file-list::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 2px; }
 
-  .folder {
-    margin-bottom: 4px;
-  }
+  .folder { margin-bottom: 4px; }
   .folder-label {
     display: flex; align-items: center; gap: 6px;
     padding: 6px 8px; border-radius: 6px;
     font-size: 11px; color: rgba(201,168,76,0.6);
-    letter-spacing: 0.5px; cursor: pointer;
-    transition: background 0.15s;
+    letter-spacing: 0.5px; cursor: pointer; transition: background 0.15s;
   }
   .folder-label:hover { background: rgba(201,168,76,0.07); }
   .folder-icon { font-size: 12px; transition: transform 0.2s; }
@@ -166,223 +137,148 @@
     display: flex; align-items: center; gap: 8px;
     padding: 7px 10px; border-radius: 6px;
     font-size: 12px; color: rgba(245,240,232,0.6);
-    cursor: pointer; transition: all 0.15s;
-    margin-bottom: 2px;
+    cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
   }
   .file-item:hover { background: rgba(201,168,76,0.08); color: var(--gold-light); }
-  .file-item.active {
-    background: rgba(201,168,76,0.15);
-    color: var(--gold-light);
-    border-left: 2px solid var(--gold);
-    padding-left: 8px;
-  }
   .file-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: 0.5; }
   .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  .sidebar-footer { padding: 12px; border-top: 1px solid rgba(201,168,76,0.1); }
-  .btn-new-file {
-    width: 100%; padding: 8px; border-radius: 8px;
-    background: rgba(201,168,76,0.1); border: 1px dashed rgba(201,168,76,0.3);
-    color: var(--gold); font-size: 12px; cursor: pointer;
-    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
-  }
-  .btn-new-file:hover { background: rgba(201,168,76,0.18); }
-
-  /* === EDITOR PANEL === */
-  .editor-panel {
+  /* === CENTER: JSON EDITOR === */
+  .json-panel {
     flex: 1; display: flex; flex-direction: column; overflow: hidden;
-    background: var(--cream);
+    background: #0e0c08;
   }
 
-  .editor-toolbar {
-    display: flex; align-items: center; gap: 8px;
+  .json-toolbar {
+    display: flex; align-items: center; gap: 10px;
     padding: 10px 16px;
-    background: var(--parchment2);
-    border-bottom: 1px solid rgba(26,18,8,0.12);
-    flex-shrink: 0; flex-wrap: wrap;
-  }
-  .file-path {
-    font-size: 12px; color: rgba(26,18,8,0.4);
-    font-family: 'DM Mono', monospace; flex: 1; min-width: 0;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .file-path span { color: var(--ink); font-weight: 500; }
-  .btn-commit {
-    padding: 6px 14px; border-radius: 8px;
-    background: var(--teal); border: none;
-    color: white; font-size: 12px; font-weight: 500;
-    cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-  }
-  .btn-commit:hover { background: var(--teal-light); }
-  .btn-commit:disabled { opacity: 0.5; cursor: not-allowed; }
-  .commit-indicator {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #e8a84c; flex-shrink: 0;
-  }
-  .commit-indicator.clean { background: #4caf7a; }
-
-  .editor-area { flex: 1; display: flex; overflow: hidden; }
-
-  textarea#editor {
-    flex: 1; padding: 24px 28px;
-    font-family: 'Amiri', serif; font-size: 16px; line-height: 1.9;
-    background: var(--cream); color: var(--ink);
-    border: none; resize: none; outline: none;
-    overflow-y: auto;
-  }
-  textarea#editor::placeholder { color: rgba(26,18,8,0.25); }
-
-  .preview-pane {
-    flex: 1; padding: 24px 28px;
-    font-family: 'Amiri', serif; font-size: 16px; line-height: 1.9;
-    color: var(--ink); overflow-y: auto;
-    border-left: 1px solid rgba(26,18,8,0.1);
-    display: none;
-  }
-  .preview-pane.visible { display: block; }
-  .preview-pane h1 { font-family: 'DM Serif Display', serif; font-size: 2em; margin-bottom: 0.5em; color: var(--teal-dim); }
-  .preview-pane h2 { font-family: 'DM Serif Display', serif; font-size: 1.5em; margin: 1em 0 0.4em; color: var(--teal); }
-  .preview-pane h3 { font-size: 1.2em; margin: 0.8em 0 0.3em; color: var(--red-accent); }
-  .preview-pane p { margin-bottom: 0.8em; }
-  .preview-pane blockquote { border-left: 3px solid var(--gold); padding-left: 16px; color: rgba(26,18,8,0.6); margin: 0.8em 0; font-style: italic; }
-  .preview-pane code { background: var(--parchment2); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
-  .arabic { direction: rtl; text-align: right; font-family: 'Amiri', serif; font-size: 1.3em; color: var(--teal-dim); }
-
-  .editor-tabs {
-    display: flex; gap: 0;
-    background: var(--parchment2);
-    border-bottom: 1px solid rgba(26,18,8,0.12);
+    background: rgba(10,8,4,0.9);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
     flex-shrink: 0;
   }
-  .tab {
-    padding: 8px 16px; font-size: 12px; cursor: pointer;
-    color: rgba(26,18,8,0.4); border-bottom: 2px solid transparent;
-    transition: all 0.15s; font-weight: 500;
+  .json-toolbar-title {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(201,168,76,0.5); flex: 1;
   }
-  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
-
-  .empty-state {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px;
-    color: rgba(26,18,8,0.3); padding: 40px;
-    text-align: center;
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); flex-shrink: 0;
+    transition: background 0.3s;
   }
-  .empty-icon { font-size: 48px; opacity: 0.3; }
-  .empty-title { font-family: 'DM Serif Display', serif; font-size: 20px; }
-  .empty-sub { font-size: 13px; max-width: 260px; line-height: 1.6; }
+  .status-dot.valid { background: #4caf7a; }
+  .status-dot.invalid { background: #cc5555; }
 
-  /* === CHAT PANEL === */
-  .chat-panel {
-    width: 360px; flex-shrink: 0;
-    background: rgba(8,12,10,0.95);
-    border-left: 1px solid rgba(45,107,107,0.25);
+  .btn-small {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    white-space: nowrap; border: none;
+  }
+  .btn-validate {
+    background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25) !important;
+    color: var(--gold);
+  }
+  .btn-validate:hover { background: rgba(201,168,76,0.22); }
+  .btn-submit {
+    background: var(--teal); color: white;
+  }
+  .btn-submit:hover:not(:disabled) { background: var(--teal-light); }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-clear {
+    background: rgba(139,46,46,0.12); border: 1px solid rgba(139,46,46,0.25) !important;
+    color: #cc7a7a;
+  }
+  .btn-clear:hover { background: rgba(139,46,46,0.22); }
+
+  textarea#json-input {
+    flex: 1; padding: 20px 24px;
+    font-family: 'DM Mono', monospace; font-size: 13px; line-height: 1.7;
+    background: #0e0c08; color: rgba(245,240,232,0.85);
+    border: none; resize: none; outline: none;
+    overflow-y: auto; tab-size: 2;
+    caret-color: var(--gold);
+  }
+  textarea#json-input::placeholder { color: rgba(245,240,232,0.12); }
+  textarea#json-input::-webkit-scrollbar { width: 4px; }
+  textarea#json-input::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.15); border-radius: 2px; }
+
+  /* === RIGHT: PREVIEW + LOG === */
+  .preview-panel {
+    width: 300px; flex-shrink: 0;
+    background: rgba(8,10,8,0.95);
+    border-left: 1px solid rgba(45,107,107,0.2);
     display: flex; flex-direction: column;
     transition: width 0.3s ease;
+    overflow: hidden;
   }
-  .chat-panel.collapsed { width: 0; overflow: hidden; }
+  .preview-panel.collapsed { width: 0; }
 
-  .chat-header {
+  .preview-header {
     padding: 14px 16px;
-    border-bottom: 1px solid rgba(45,107,107,0.2);
-    display: flex; align-items: center; gap: 10px;
-    flex-shrink: 0;
+    border-bottom: 1px solid rgba(45,107,107,0.15);
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(74,153,153,0.5); flex-shrink: 0;
   }
-  .ai-avatar {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--teal), var(--teal-dim));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0;
-  }
-  .chat-title-text { flex: 1; }
-  .chat-title-main { font-size: 13px; color: var(--teal-light); font-weight: 500; }
-  .chat-title-sub { font-size: 10px; color: rgba(74,153,153,0.5); }
 
-  .messages {
-    flex: 1; overflow-y: auto; padding: 16px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .messages::-webkit-scrollbar { width: 4px; }
-  .messages::-webkit-scrollbar-thumb { background: rgba(45,107,107,0.3); border-radius: 2px; }
+  .preview-body { flex: 1; overflow-y: auto; padding: 14px 16px; }
+  .preview-body::-webkit-scrollbar { width: 4px; }
+  .preview-body::-webkit-scrollbar-thumb { background: rgba(45,107,107,0.2); border-radius: 2px; }
 
-  .msg {
-    max-width: 85%;
-    animation: msgIn 0.25s ease;
+  .preview-empty {
+    text-align: center; padding: 40px 20px;
+    font-size: 12px; color: rgba(74,153,153,0.25); line-height: 1.8;
   }
-  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .msg.user { align-self: flex-end; }
-  .msg.ai { align-self: flex-start; }
-  .msg-bubble {
-    padding: 10px 14px; border-radius: 12px;
-    font-size: 13px; line-height: 1.6;
-  }
-  .msg.user .msg-bubble {
-    background: rgba(45,74,107,0.4);
-    border: 1px solid rgba(45,74,107,0.5);
-    color: rgba(245,240,232,0.9);
-    border-bottom-right-radius: 4px;
-  }
-  .msg.ai .msg-bubble {
-    background: rgba(45,90,74,0.3);
-    border: 1px solid rgba(45,107,107,0.3);
-    color: rgba(245,240,232,0.85);
-    border-bottom-left-radius: 4px;
-  }
-  .msg-time { font-size: 10px; color: rgba(245,240,232,0.25); margin-top: 4px; padding: 0 4px; }
-  .msg.user .msg-time { text-align: right; }
 
-  /* Apply to editor button inside AI messages */
-  .apply-btn {
-    margin-top: 8px;
-    padding: 6px 12px; border-radius: 6px;
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold); font-size: 11px; cursor: pointer;
-    transition: all 0.2s; width: 100%;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .apply-btn:hover { background: rgba(201,168,76,0.25); }
-
-  .chat-input-area {
-    padding: 12px 14px;
-    border-top: 1px solid rgba(45,107,107,0.2);
-    display: flex; gap: 8px; align-items: flex-end;
-    flex-shrink: 0;
-  }
-  .context-badge {
-    padding: 4px 10px; margin: 0 14px 8px;
-    background: rgba(45,107,107,0.1);
+  .commit-card {
+    background: rgba(45,107,107,0.08);
     border: 1px solid rgba(45,107,107,0.2);
-    border-radius: 6px; font-size: 10px;
-    color: rgba(74,153,153,0.6);
-    display: flex; align-items: center; gap: 6px;
-    flex-shrink: 0;
+    border-radius: 8px; padding: 12px; margin-bottom: 14px;
   }
-  .context-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal-light); }
+  .commit-card-title { font-size: 11px; color: rgba(74,153,153,0.5); letter-spacing: 0.5px; margin-bottom: 6px; }
+  .commit-card-message { font-size: 13px; color: var(--gold-light); font-weight: 500; line-height: 1.4; }
+  .commit-card-body { font-size: 11px; color: rgba(245,240,232,0.4); margin-top: 6px; line-height: 1.5; }
 
-  textarea#chat-input {
-    flex: 1; background: rgba(45,107,107,0.1);
-    border: 1px solid rgba(45,107,107,0.25); border-radius: 10px;
-    color: rgba(245,240,232,0.9); font-size: 13px;
-    padding: 10px 14px; resize: none; outline: none;
-    font-family: 'DM Sans', sans-serif; line-height: 1.5;
-    max-height: 120px; min-height: 42px;
-    transition: border-color 0.2s;
+  .changes-list { display: flex; flex-direction: column; gap: 6px; }
+  .change-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 8px 10px; border-radius: 6px;
+    font-size: 11px; line-height: 1.5;
   }
-  textarea#chat-input:focus { border-color: rgba(45,107,107,0.5); }
-  textarea#chat-input::placeholder { color: rgba(74,153,153,0.3); }
+  .change-item.add { background: rgba(45,107,69,0.12); border: 1px solid rgba(45,107,69,0.2); }
+  .change-item.modify { background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.15); }
+  .change-item.delete { background: rgba(139,46,46,0.1); border: 1px solid rgba(139,46,46,0.2); }
+  .change-item.rename { background: rgba(45,74,107,0.12); border: 1px solid rgba(45,74,107,0.25); }
+  .change-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 2px 5px; border-radius: 3px; flex-shrink: 0; margin-top: 1px;
+  }
+  .add .change-badge { background: rgba(45,153,112,0.3); color: #6ecf9a; }
+  .modify .change-badge { background: rgba(201,168,76,0.2); color: var(--gold-light); }
+  .delete .change-badge { background: rgba(139,46,46,0.3); color: #cc7a7a; }
+  .rename .change-badge { background: rgba(45,74,153,0.3); color: #7aadcc; }
+  .change-path { color: rgba(245,240,232,0.6); word-break: break-all; }
+  .change-path-arrow { color: rgba(245,240,232,0.25); margin: 0 2px; }
 
-  .btn-send {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--teal); border: none;
-    color: white; font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s;
+  /* === LOG === */
+  .log-section {
+    border-top: 1px solid rgba(45,107,107,0.15);
+    flex-shrink: 0; max-height: 220px; display: flex; flex-direction: column;
   }
-  .btn-send:hover { background: var(--teal-light); }
-  .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .log-header {
+    padding: 10px 16px 8px;
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(74,153,153,0.4); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .log-clear-btn { font-size: 10px; color: rgba(74,153,153,0.3); cursor: pointer; background: none; border: none; padding: 0; }
+  .log-clear-btn:hover { color: rgba(74,153,153,0.6); }
+  .log-body { overflow-y: auto; padding: 0 16px 12px; flex: 1; }
+  .log-body::-webkit-scrollbar { width: 4px; }
+  .log-body::-webkit-scrollbar-thumb { background: rgba(45,107,107,0.2); border-radius: 2px; }
+  .log-entry { font-size: 11px; line-height: 1.6; padding: 2px 0; font-family: 'DM Mono', monospace; }
+  .log-entry.info { color: rgba(74,153,153,0.7); }
+  .log-entry.success { color: #6ecf9a; }
+  .log-entry.error { color: #cc7a7a; }
+  .log-entry.warn { color: var(--gold); }
 
   /* === MODALS === */
   .modal-overlay {
@@ -426,15 +322,6 @@
   }
   .btn-secondary:hover { border-color: rgba(245,240,232,0.3); color: rgba(245,240,232,0.7); }
 
-  /* commit modal */
-  .commit-preview {
-    background: rgba(255,255,255,0.04); border-radius: 8px;
-    padding: 12px; font-size: 12px; color: rgba(245,240,232,0.5);
-    font-family: monospace; margin-bottom: 16px; max-height: 120px;
-    overflow-y: auto; line-height: 1.6; white-space: pre-wrap;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-
   /* === TOAST === */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -446,32 +333,32 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: #2a1a1a; border-color: rgba(139,46,46,0.4); color: #cc7a7a; }
 
-  /* === LOADING === */
-  .loading-dots { display: inline-flex; gap: 4px; align-items: center; padding: 4px 0; }
-  .loading-dots span {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--teal-light); animation: dot 1.2s infinite;
-  }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
-
-  /* === RESPONSIVE (iOS) === */
+  /* === RESPONSIVE === */
   @media (max-width: 768px) {
-    .sidebar { position: fixed; top: 0; left: 0; height: 100dvh; z-index: 50; transform: translateX(-260px); }
+    .sidebar { position: fixed; top: 0; left: 0; height: 100dvh; z-index: 50; transform: translateX(-250px); }
     .sidebar.open { transform: translateX(0); }
-    .sidebar.collapsed { transform: translateX(-260px); }
-    .chat-panel { position: fixed; right: 0; top: 0; height: 100dvh; z-index: 50; width: 100vw !important; transform: translateX(100%); transition: transform 0.3s ease; }
-    .chat-panel.open { transform: translateX(0); }
-    .chat-panel.collapsed { transform: translateX(100%); width: 100vw !important; }
-    .editor-panel { width: 100%; }
+    .preview-panel { position: fixed; right: 0; top: 0; height: 100dvh; z-index: 50; width: 100vw !important; transform: translateX(100%); transition: transform 0.3s ease; }
+    .preview-panel.open { transform: translateX(0); }
+    .preview-panel.collapsed { transform: translateX(100%); }
   }
-
   .overlay-bg {
-    display: none; position: fixed; inset: 0; z-index: 40;
-    background: rgba(0,0,0,0.5);
+    display: none; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.5);
   }
   .overlay-bg.show { display: block; }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    height: 2px; background: rgba(201,168,76,0.1);
+    flex-shrink: 0; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0; background: var(--gold);
+    transition: width 0.3s ease; border-radius: 1px;
+  }
+  .progress-bar-fill.indeterminate {
+    width: 40%; animation: slide 1.2s ease-in-out infinite;
+  }
+  @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
 </style>
 </head>
 <body>
@@ -485,22 +372,25 @@
       <div class="logo-icon">ق</div>
       <div class="logo-text">
         <div class="logo-title">Quran Context</div>
-        <div class="logo-sub">AI Editor · GitHub Sync</div>
+        <div class="logo-sub">Commit Tool · GitHub Sync</div>
       </div>
     </div>
     <div class="header-actions">
       <button class="btn-icon" id="btn-toggle-sidebar" title="Toggle Files">📁</button>
+      <button class="btn-icon" id="btn-refresh" title="Refresh file tree">↺</button>
       <button class="btn-icon" id="btn-settings" title="Settings">⚙️</button>
-      <button class="btn-icon" id="btn-toggle-chat" title="Toggle AI Chat">🤖</button>
+      <button class="btn-icon" id="btn-toggle-preview" title="Toggle Preview">◨</button>
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+
   <div class="main">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR: File Browser -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-title">Repository</div>
+        <div class="sidebar-title">Repository Files</div>
         <div class="repo-info" id="repo-display" onclick="openSettings()">
           <div class="repo-dot"></div>
           <div class="repo-name" id="repo-name-display">Configure repo →</div>
@@ -511,68 +401,71 @@
           Configure your GitHub repo to see files
         </div>
       </div>
-      <div class="sidebar-footer">
-        <button class="btn-new-file" onclick="createNewFile()">+ New MD File</button>
-      </div>
     </div>
 
-    <!-- EDITOR PANEL -->
-    <div class="editor-panel" id="editor-panel">
-      <div class="editor-tabs">
-        <div class="tab active" onclick="switchTab('edit')">Edit</div>
-        <div class="tab" onclick="switchTab('preview')">Preview</div>
-      </div>
-      <div class="editor-toolbar">
-        <div class="file-path" id="file-path-display">
-          <span>No file selected</span>
-        </div>
-        <div class="commit-indicator" id="commit-indicator" title="Unsaved changes"></div>
-        <button class="btn-commit" id="btn-commit" onclick="openCommitModal()" disabled>
-          ↑ Commit & Push
+    <!-- CENTER: JSON Editor -->
+    <div class="json-panel">
+      <div class="json-toolbar">
+        <div class="json-toolbar-title">Commit JSON</div>
+        <div class="status-dot" id="status-dot" title="JSON status"></div>
+        <button class="btn-small btn-validate" onclick="validateJSON()">Validate</button>
+        <button class="btn-small btn-clear" onclick="clearJSON()">Clear</button>
+        <button class="btn-small btn-submit" id="btn-submit" onclick="submitCommit()" disabled>
+          ↑ Submit Commit
         </button>
       </div>
-      <div class="editor-area" id="editor-area">
-        <div class="empty-state" id="empty-state">
-          <div class="empty-icon">📖</div>
-          <div class="empty-title">Open a File</div>
-          <div class="empty-sub">Select a Markdown file from the sidebar, or create a new one to begin editing.</div>
-        </div>
-        <textarea id="editor" style="display:none" placeholder="Start writing your Quran context notes in Markdown..." oninput="onEditorChange()"></textarea>
-        <div class="preview-pane" id="preview-pane"></div>
-      </div>
+      <textarea id="json-input"
+        placeholder='{
+  "commit": {
+    "message": "Short one-line title",
+    "body": "Optional longer description or chat summary"
+  },
+  "changes": [
+    {
+      "action": "add",
+      "path": "Content/016-النحل/new-file.md",
+      "content": "# Title\n\nContent here..."
+    },
+    {
+      "action": "modify",
+      "path": "Content/README.md",
+      "content": "# Updated content..."
+    },
+    {
+      "action": "delete",
+      "path": "Content/old-file.md"
+    },
+    {
+      "action": "rename",
+      "from": "Content/old-name.md",
+      "to": "Content/new-name.md"
+    }
+  ]
+}'
+        oninput="onJSONInput()"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="off"
+      ></textarea>
     </div>
 
-    <!-- CHAT PANEL -->
-    <div class="chat-panel" id="chat-panel">
-      <div class="chat-header">
-        <div class="ai-avatar">✦</div>
-        <div class="chat-title-text">
-          <div class="chat-title-main">AI Assistant</div>
-          <div class="chat-title-sub" id="chat-context-label">No file open</div>
-        </div>
-        <button class="btn-icon" id="btn-close-chat" onclick="toggleChat()" style="background:rgba(45,107,107,0.1);border-color:rgba(45,107,107,0.2);color:var(--teal-light);">✕</button>
-      </div>
-      <div class="context-badge" id="context-badge">
-        <div class="context-dot"></div>
-        <span id="context-badge-text">Open a file to provide context</span>
-      </div>
-      <div class="messages" id="messages">
-        <div class="msg ai">
-          <div class="msg-bubble">
-            السلام عليكم! I'm your Quran context assistant.<br><br>
-            Open a file from the sidebar, then ask me to:<br>
-            • Explain a verse's context<br>
-            • Add tafsir notes<br>
-            • Rewrite or expand a section<br>
-            • Generate a new explanation<br><br>
-            I'll update your Markdown file directly.
-          </div>
-          <div class="msg-time">Ready</div>
+    <!-- RIGHT: Preview + Log -->
+    <div class="preview-panel" id="preview-panel">
+      <div class="preview-header">Commit Preview</div>
+      <div class="preview-body" id="preview-body">
+        <div class="preview-empty">
+          Paste a commit JSON on the left.<br>
+          A preview of your changes will appear here.
         </div>
       </div>
-      <div class="chat-input-area">
-        <textarea id="chat-input" placeholder="Ask about this file..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResizeTextarea(this)"></textarea>
-        <button class="btn-send" id="btn-send" onclick="sendMessage()">↑</button>
+      <div class="log-section">
+        <div class="log-header">
+          <span>Log</span>
+          <button class="log-clear-btn" onclick="clearLog()">clear</button>
+        </div>
+        <div class="log-body" id="log-body">
+          <div class="log-entry info">Ready.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -585,7 +478,7 @@
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
     <h2>GitHub Configuration</h2>
-    <p>Connect your GitHub repository to sync your Quran context files.</p>
+    <p>Connect your GitHub repository to commit files.</p>
     <div class="form-group">
       <label class="form-label">GITHUB PERSONAL ACCESS TOKEN</label>
       <input type="password" class="form-input" id="input-token" placeholder="ghp_xxxxxxxxxxxx" />
@@ -598,49 +491,9 @@
       <label class="form-label">BRANCH</label>
       <input type="text" class="form-input" id="input-branch" placeholder="main" />
     </div>
-    <div class="form-group">
-      <label class="form-label">ANTHROPIC API KEY</label>
-      <input type="password" class="form-input" id="input-claude-key" placeholder="sk-ant-xxxxxxxxxxxx" />
-    </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
       <button class="btn-primary" onclick="saveSettings()">Save & Connect</button>
-    </div>
-  </div>
-</div>
-
-<!-- COMMIT MODAL -->
-<div class="modal-overlay" id="commit-modal">
-  <div class="modal">
-    <h2>Commit & Push</h2>
-    <p>Review your changes and enter a commit message.</p>
-    <div class="form-group">
-      <label class="form-label">CHANGES PREVIEW</label>
-      <div class="commit-preview" id="commit-preview"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">COMMIT MESSAGE</label>
-      <input type="text" class="form-input" id="commit-message" placeholder="docs: update Surah Al-Baqarah context notes" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeCommitModal()">Cancel</button>
-      <button class="btn-primary" id="btn-do-commit" onclick="doCommit()">Push to GitHub ↑</button>
-    </div>
-  </div>
-</div>
-
-<!-- NEW FILE MODAL -->
-<div class="modal-overlay" id="newfile-modal">
-  <div class="modal">
-    <h2>New Markdown File</h2>
-    <p>Create a new file in your repository.</p>
-    <div class="form-group">
-      <label class="form-label">FILE PATH (relative to repo root)</label>
-      <input type="text" class="form-input" id="input-newfile-path" placeholder="surahs/al-baqarah.md" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('newfile-modal')">Cancel</button>
-      <button class="btn-primary" onclick="confirmNewFile()">Create File</button>
     </div>
   </div>
 </div>
@@ -652,13 +505,8 @@
 // ============================================================
 // STATE
 // ============================================================
-let config = {
-  token: '', repo: '', branch: 'main', claudeKey: ''
-};
-let currentFile = null;   // { path, sha, content }
-let originalContent = '';
-let isDirty = false;
-let chatHistory = [];
+let config = { token: '', repo: '', branch: 'main' };
+let parsedCommit = null;
 
 // ============================================================
 // INIT
@@ -671,25 +519,24 @@ window.onload = () => {
   }
 };
 
+// ============================================================
+// CONFIG
+// ============================================================
 function loadConfig() {
   try {
-    const saved = localStorage.getItem('qcfg');
+    const saved = localStorage.getItem('qcfg2');
     if (saved) config = { ...config, ...JSON.parse(saved) };
   } catch(e) {}
 }
 
-function saveConfig() {
-  localStorage.setItem('qcfg', JSON.stringify(config));
+function saveConfigToStorage() {
+  localStorage.setItem('qcfg2', JSON.stringify(config));
 }
 
-// ============================================================
-// SETTINGS
-// ============================================================
 function openSettings() {
   document.getElementById('input-token').value = config.token;
   document.getElementById('input-repo').value = config.repo;
   document.getElementById('input-branch').value = config.branch || 'main';
-  document.getElementById('input-claude-key').value = config.claudeKey;
   document.getElementById('settings-modal').classList.add('open');
 }
 
@@ -701,8 +548,7 @@ function saveSettings() {
   config.token = document.getElementById('input-token').value.trim();
   config.repo = document.getElementById('input-repo').value.trim();
   config.branch = document.getElementById('input-branch').value.trim() || 'main';
-  config.claudeKey = document.getElementById('input-claude-key').value.trim();
-  saveConfig();
+  saveConfigToStorage();
   document.getElementById('repo-name-display').textContent = config.repo || 'Configure repo →';
   closeSettings();
   if (config.repo && config.token) loadFileTree();
@@ -710,7 +556,7 @@ function saveSettings() {
 }
 
 // ============================================================
-// GITHUB API
+// GITHUB API — Low-level
 // ============================================================
 async function ghFetch(path, opts = {}) {
   const url = `https://api.github.com/repos/${config.repo}/${path}`;
@@ -725,11 +571,14 @@ async function ghFetch(path, opts = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `GitHub API error ${res.status}`);
+    throw new Error(err.message || `GitHub API ${res.status}`);
   }
   return res.json();
 }
 
+// ============================================================
+// FILE TREE
+// ============================================================
 async function loadFileTree() {
   const list = document.getElementById('file-list');
   list.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:rgba(201,168,76,0.3);">Loading…</div>';
@@ -737,37 +586,24 @@ async function loadFileTree() {
     const tree = await ghFetch(`git/trees/${config.branch}?recursive=1`);
     const mdFiles = tree.tree.filter(f => f.type === 'blob' && f.path.endsWith('.md'));
     renderFileTree(mdFiles);
+    addLog('info', `Loaded ${mdFiles.length} files from ${config.repo}`);
   } catch(e) {
     list.innerHTML = `<div style="padding:20px;text-align:center;font-size:12px;color:#cc7a7a;">${e.message}</div>`;
+    addLog('error', e.message);
   }
 }
 
 function renderFileTree(files) {
   const list = document.getElementById('file-list');
   list.innerHTML = '';
-
-  // Group by folder
   const folders = {};
   files.forEach(f => {
     const parts = f.path.split('/');
-    if (parts.length === 1) {
-      if (!folders['']) folders[''] = [];
-      folders[''].push(f);
-    } else {
-      const folder = parts.slice(0, -1).join('/');
-      if (!folders[folder]) folders[folder] = [];
-      folders[folder].push(f);
-    }
+    const folder = parts.length === 1 ? '' : parts.slice(0, -1).join('/');
+    if (!folders[folder]) folders[folder] = [];
+    folders[folder].push(f);
   });
-
-  // Root files
-  if (folders['']) {
-    folders[''].forEach(f => {
-      list.appendChild(makeFileItem(f));
-    });
-  }
-
-  // Folders
+  if (folders['']) folders[''].forEach(f => list.appendChild(makeFileItem(f)));
   Object.keys(folders).filter(k => k !== '').forEach(folder => {
     const div = document.createElement('div');
     div.className = 'folder open';
@@ -786,341 +622,298 @@ function renderFileTree(files) {
 function makeFileItem(f) {
   const div = document.createElement('div');
   div.className = 'file-item';
-  div.dataset.path = f.path;
   const name = f.path.split('/').pop();
   div.innerHTML = `<div class="file-dot"></div><div class="file-name">${name}</div>`;
-  div.onclick = () => openFile(f.path, div);
+  div.title = f.path;
   return div;
 }
 
-async function openFile(path, el) {
-  if (isDirty) {
-    if (!confirm('You have unsaved changes. Discard?')) return;
+// ============================================================
+// JSON INPUT & VALIDATION
+// ============================================================
+let debounceTimer;
+
+function onJSONInput() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(validateJSON, 600);
+}
+
+function validateJSON() {
+  const raw = document.getElementById('json-input').value.trim();
+  const dot = document.getElementById('status-dot');
+  const submitBtn = document.getElementById('btn-submit');
+
+  if (!raw) {
+    dot.className = 'status-dot';
+    submitBtn.disabled = true;
+    parsedCommit = null;
+    renderPreview(null);
+    return;
   }
-  // Mark active
-  document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
-  el?.classList.add('active');
 
   try {
-    const data = await ghFetch(`contents/${path}?ref=${config.branch}`);
-    const content = atob(data.content.replace(/\n/g, ''));
-    currentFile = { path, sha: data.sha, content };
-    originalContent = content;
-    isDirty = false;
-
-    document.getElementById('empty-state').style.display = 'none';
-    const editor = document.getElementById('editor');
-    editor.style.display = 'block';
-    editor.value = content;
-
-    document.getElementById('file-path-display').innerHTML = `<span>${path}</span>`;
-    document.getElementById('commit-indicator').className = 'commit-indicator clean';
-    document.getElementById('btn-commit').disabled = false;
-    document.getElementById('chat-context-label').textContent = path.split('/').pop();
-    document.getElementById('context-badge-text').textContent = `Context: ${path}`;
-
-    updatePreview();
+    const data = JSON.parse(raw);
+    const errors = validateSchema(data);
+    if (errors.length > 0) {
+      dot.className = 'status-dot invalid';
+      submitBtn.disabled = true;
+      parsedCommit = null;
+      renderPreview(null);
+      addLog('warn', `Schema errors: ${errors.join('; ')}`);
+      showToast(errors[0], true);
+      return;
+    }
+    parsedCommit = data;
+    dot.className = 'status-dot valid';
+    submitBtn.disabled = false;
+    renderPreview(data);
+    addLog('info', `Valid — ${data.changes.length} change(s) ready`);
   } catch(e) {
-    showToast(e.message, true);
+    dot.className = 'status-dot invalid';
+    submitBtn.disabled = true;
+    parsedCommit = null;
+    renderPreview(null);
+    addLog('warn', `JSON parse error: ${e.message}`);
   }
 }
 
-// ============================================================
-// EDITOR
-// ============================================================
-let activeTab = 'edit';
-
-function onEditorChange() {
-  isDirty = document.getElementById('editor').value !== originalContent;
-  document.getElementById('commit-indicator').className = `commit-indicator${isDirty ? '' : ' clean'}`;
-  if (activeTab === 'preview') updatePreview();
-}
-
-function switchTab(tab) {
-  activeTab = tab;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && tab === 'edit') || (i === 1 && tab === 'preview'));
-  });
-  const editor = document.getElementById('editor');
-  const preview = document.getElementById('preview-pane');
-  if (tab === 'edit') {
-    editor.style.display = 'block';
-    preview.classList.remove('visible');
-  } else {
-    editor.style.display = 'none';
-    preview.classList.add('visible');
-    updatePreview();
+function validateSchema(data) {
+  const errors = [];
+  if (!data.commit) errors.push('"commit" field is required');
+  else {
+    if (!data.commit.message || typeof data.commit.message !== 'string')
+      errors.push('"commit.message" must be a non-empty string');
   }
-}
-
-function updatePreview() {
-  const content = document.getElementById('editor').value;
-  document.getElementById('preview-pane').innerHTML = renderMarkdown(content);
-}
-
-function renderMarkdown(md) {
-  return md
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-    .replace(/`(.+?)`/g, '<code>$1</code>')
-    .replace(/\[arabic\]([\s\S]*?)\[\/arabic\]/g, '<div class="arabic">$1</div>')
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[h|b|p])(.+)$/gm, (m) => m.trim() ? m : '')
-    .replace(/^(.+)$/gm, (m) => {
-      if (!m.startsWith('<')) return `<p>${m}</p>`;
-      return m;
+  if (!Array.isArray(data.changes) || data.changes.length === 0)
+    errors.push('"changes" must be a non-empty array');
+  else {
+    data.changes.forEach((c, i) => {
+      const validActions = ['add', 'modify', 'delete', 'rename'];
+      if (!validActions.includes(c.action))
+        errors.push(`changes[${i}]: "action" must be one of: ${validActions.join(', ')}`);
+      if ((c.action === 'add' || c.action === 'modify') && typeof c.content !== 'string')
+        errors.push(`changes[${i}]: "content" (string) is required for action "${c.action}"`);
+      if (c.action === 'delete' && !c.path)
+        errors.push(`changes[${i}]: "path" is required for action "delete"`);
+      if (c.action === 'rename' && (!c.from || !c.to))
+        errors.push(`changes[${i}]: "from" and "to" are required for action "rename"`);
+      if ((c.action === 'add' || c.action === 'modify' || c.action === 'delete') && !c.path)
+        errors.push(`changes[${i}]: "path" is required`);
     });
+  }
+  return errors;
 }
 
 // ============================================================
-// COMMIT
+// PREVIEW RENDER
 // ============================================================
-function openCommitModal() {
-  if (!currentFile) return;
-  const current = document.getElementById('editor').value;
-  document.getElementById('commit-preview').textContent =
-    `File: ${currentFile.path}\nBranch: ${config.branch}\nSize: ${current.length} chars`;
-  document.getElementById('commit-message').value =
-    `docs: update ${currentFile.path.split('/').pop().replace('.md','')} context notes`;
-  document.getElementById('commit-modal').classList.add('open');
+function renderPreview(data) {
+  const body = document.getElementById('preview-body');
+  if (!data) {
+    body.innerHTML = `<div class="preview-empty">Paste a commit JSON on the left.<br>A preview of your changes will appear here.</div>`;
+    return;
+  }
+
+  const actionLabels = { add: 'ADD', modify: 'MOD', delete: 'DEL', rename: 'REN' };
+
+  const changesHTML = data.changes.map(c => {
+    const label = actionLabels[c.action] || c.action.toUpperCase();
+    let pathHTML = '';
+    if (c.action === 'rename') {
+      pathHTML = `<span class="change-path">${c.from}<span class="change-path-arrow"> → </span>${c.to}</span>`;
+    } else {
+      pathHTML = `<span class="change-path">${c.path}</span>`;
+    }
+    return `<div class="change-item ${c.action}">
+      <span class="change-badge">${label}</span>
+      ${pathHTML}
+    </div>`;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="commit-card">
+      <div class="commit-card-title">COMMIT MESSAGE</div>
+      <div class="commit-card-message">${escapeHTML(data.commit.message)}</div>
+      ${data.commit.body ? `<div class="commit-card-body">${escapeHTML(data.commit.body)}</div>` : ''}
+    </div>
+    <div class="commit-card-title" style="font-size:10px;letter-spacing:1px;color:rgba(74,153,153,0.5);margin-bottom:8px;">${data.changes.length} CHANGE${data.changes.length !== 1 ? 'S' : ''}</div>
+    <div class="changes-list">${changesHTML}</div>
+  `;
 }
 
-function closeCommitModal() {
-  document.getElementById('commit-modal').classList.remove('open');
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-async function doCommit() {
-  const message = document.getElementById('commit-message').value.trim();
-  if (!message) { showToast('Enter a commit message', true); return; }
-  const btn = document.getElementById('btn-do-commit');
-  btn.disabled = true; btn.textContent = 'Pushing…';
+// ============================================================
+// GITHUB COMMIT — Git Data API (multi-file, atomic)
+// ============================================================
+async function submitCommit() {
+  if (!parsedCommit) return;
+  if (!config.token || !config.repo) {
+    showToast('Configure GitHub settings first', true);
+    openSettings();
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Working…';
+  startProgress();
 
   try {
-    const content = document.getElementById('editor').value;
-    const encoded = btoa(unescape(encodeURIComponent(content)));
-    await ghFetch(`contents/${currentFile.path}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        message,
-        content: encoded,
-        sha: currentFile.sha,
-        branch: config.branch
-      })
-    });
-    // Refresh sha
-    const updated = await ghFetch(`contents/${currentFile.path}?ref=${config.branch}`);
-    currentFile.sha = updated.sha;
-    originalContent = content;
-    isDirty = false;
-    document.getElementById('commit-indicator').className = 'commit-indicator clean';
-    closeCommitModal();
-    showToast('✓ Pushed to GitHub successfully!');
-  } catch(e) {
-    showToast(e.message, true);
-  } finally {
-    btn.disabled = false; btn.textContent = 'Push to GitHub ↑';
-  }
-}
+    const { commit, changes } = parsedCommit;
 
-// ============================================================
-// NEW FILE
-// ============================================================
-function createNewFile() {
-  document.getElementById('input-newfile-path').value = '';
-  document.getElementById('newfile-modal').classList.add('open');
-}
+    // 1. Get branch HEAD commit
+    addLog('info', `Fetching branch ${config.branch}…`);
+    const ref = await ghFetch(`git/ref/heads/${config.branch}`);
+    const headSha = ref.object.sha;
 
-async function confirmNewFile() {
-  const path = document.getElementById('input-newfile-path').value.trim();
-  if (!path) { showToast('Enter a file path', true); return; }
-  const fullPath = path.endsWith('.md') ? path : path + '.md';
+    // 2. Get tree SHA from HEAD commit
+    const headCommit = await ghFetch(`git/commits/${headSha}`);
+    const baseTreeSha = headCommit.tree.sha;
 
-  const template = `# ${fullPath.split('/').pop().replace('.md','')}\n\n## Context\n\n_Add Quranic context here._\n\n## Key Themes\n\n## Notes\n`;
-  const encoded = btoa(unescape(encodeURIComponent(template)));
+    // 3. Build tree items
+    addLog('info', `Building tree for ${changes.length} change(s)…`);
+    const treeItems = [];
 
-  try {
-    await ghFetch(`contents/${fullPath}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        message: `docs: create ${fullPath}`,
-        content: encoded,
-        branch: config.branch
-      })
-    });
-    closeModal('newfile-modal');
-    showToast('File created!');
-    await loadFileTree();
-    // Open the new file
-    const el = document.querySelector(`[data-path="${fullPath}"]`);
-    if (el) openFile(fullPath, el);
-  } catch(e) {
-    showToast(e.message, true);
-  }
-}
+    for (const change of changes) {
+      if (change.action === 'add' || change.action === 'modify') {
+        addLog('info', `  Creating blob: ${change.path}`);
+        const blob = await ghFetch('git/blobs', {
+          method: 'POST',
+          body: JSON.stringify({ content: change.content, encoding: 'utf-8' })
+        });
+        treeItems.push({ path: change.path, mode: '100644', type: 'blob', sha: blob.sha });
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
+      } else if (change.action === 'delete') {
+        addLog('info', `  Deleting: ${change.path}`);
+        // null sha = delete in GitHub tree API
+        treeItems.push({ path: change.path, mode: '100644', type: 'blob', sha: null });
 
-// ============================================================
-// AI CHAT
-// ============================================================
-async function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  if (!config.claudeKey) { showToast('Set your Anthropic API key in Settings', true); return; }
+      } else if (change.action === 'rename') {
+        addLog('info', `  Renaming: ${change.from} → ${change.to}`);
+        // Delete old path
+        treeItems.push({ path: change.from, mode: '100644', type: 'blob', sha: null });
+        // Create new path
+        let contentToUse = change.content;
+        if (contentToUse === undefined) {
+          // Fetch old file content
+          addLog('info', `  Fetching old content for rename…`);
+          const oldFile = await ghFetch(`contents/${encodeURIComponent(change.from)}?ref=${config.branch}`);
+          contentToUse = decodeBase64UTF8(oldFile.content);
+        }
+        const blob = await ghFetch('git/blobs', {
+          method: 'POST',
+          body: JSON.stringify({ content: contentToUse, encoding: 'utf-8' })
+        });
+        treeItems.push({ path: change.to, mode: '100644', type: 'blob', sha: blob.sha });
+      }
+    }
 
-  input.value = '';
-  autoResizeTextarea(input);
-  appendMsg('user', text);
-  document.getElementById('btn-send').disabled = true;
-
-  // Build context
-  const fileContent = currentFile ? document.getElementById('editor').value : null;
-  const systemPrompt = `You are a Quranic studies assistant helping to create and edit Markdown files explaining Quranic verse contexts, meanings, and tafsir.
-
-${fileContent ? `Current file being edited (${currentFile?.path}):\n\`\`\`markdown\n${fileContent.substring(0, 3000)}\n\`\`\`` : 'No file is currently open.'}
-
-When the user asks you to update, rewrite, add, or generate content for the file:
-1. Provide a clear explanation of your changes
-2. Output the FULL updated markdown content wrapped in a code block like: \`\`\`markdown-update\n...\n\`\`\`
-3. Be scholarly, respectful, and accurate with Islamic content
-4. Use proper Markdown formatting with headings, blockquotes for verses, etc.
-5. You may include [arabic]Arabic text here[/arabic] for Arabic content
-
-If no file update is needed (just a question), answer normally without the code block.`;
-
-  chatHistory.push({ role: 'user', content: text });
-
-  // Loading indicator
-  const loadingId = 'loading-' + Date.now();
-  appendMsg('ai', '<div class="loading-dots"><span></span><span></span><span></span></div>', loadingId);
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    // 4. Create new tree
+    addLog('info', 'Creating new tree…');
+    const newTree = await ghFetch('git/trees', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': config.claudeKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      body: JSON.stringify({ base_tree: baseTreeSha, tree: treeItems })
+    });
+
+    // 5. Create commit
+    addLog('info', 'Creating commit…');
+    const fullMessage = commit.body
+      ? `${commit.message}\n\n${commit.body}`
+      : commit.message;
+
+    const newCommit = await ghFetch('git/commits', {
+      method: 'POST',
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages: chatHistory
+        message: fullMessage,
+        tree: newTree.sha,
+        parents: [headSha]
       })
     });
 
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
+    // 6. Update branch ref
+    addLog('info', `Updating branch ${config.branch}…`);
+    await ghFetch(`git/refs/heads/${config.branch}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sha: newCommit.sha, force: false })
+    });
 
-    const reply = data.content[0].text;
-    chatHistory.push({ role: 'assistant', content: reply });
+    addLog('success', `✓ Committed: ${newCommit.sha.slice(0, 7)} — ${commit.message}`);
+    showToast(`✓ Committed ${newCommit.sha.slice(0, 7)} successfully!`);
+    stopProgress(true);
 
-    // Remove loading
-    document.getElementById(loadingId)?.remove();
-
-    // Check for markdown update
-    const updateMatch = reply.match(/```markdown-update\n([\s\S]*?)```/);
-    const displayText = reply.replace(/```markdown-update\n[\s\S]*?```/g, '').trim();
-
-    appendMsgWithUpdate('ai', displayText || '(Content generated — see Apply button)', updateMatch?.[1]);
+    // Refresh file tree
+    await loadFileTree();
 
   } catch(e) {
-    document.getElementById(loadingId)?.remove();
-    appendMsg('ai', `Error: ${e.message}`);
+    addLog('error', `✗ ${e.message}`);
     showToast(e.message, true);
+    stopProgress(false);
   } finally {
-    document.getElementById('btn-send').disabled = false;
+    btn.disabled = !parsedCommit;
+    btn.textContent = '↑ Submit Commit';
   }
 }
 
-function appendMsg(role, html, id = '') {
-  const msgs = document.getElementById('messages');
-  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  if (id) div.id = id;
-  div.innerHTML = `
-    <div class="msg-bubble">${html}</div>
-    <div class="msg-time">${time}</div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+// Properly decode base64 + UTF-8 (handles Arabic)
+function decodeBase64UTF8(b64) {
+  const cleaned = b64.replace(/\n/g, '');
+  const binary = atob(cleaned);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
 }
 
-function appendMsgWithUpdate(role, text, updateContent) {
-  const msgs = document.getElementById('messages');
-  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-
-  // Convert basic markdown in AI response
-  const formatted = text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-
-  let applyBtn = '';
-  if (updateContent && currentFile) {
-    const escaped = updateContent.replace(/'/g, "\\'").replace(/\n/g, '\\n');
-    applyBtn = `<button class="apply-btn" onclick="applyToEditor('${escaped}')">✦ Apply changes to editor</button>`;
-  } else if (updateContent && !currentFile) {
-    applyBtn = `<div style="font-size:11px;color:rgba(201,168,76,0.5);margin-top:8px;">Open a file first to apply changes</div>`;
-  }
-
-  div.innerHTML = `
-    <div class="msg-bubble">${formatted}${applyBtn}</div>
-    <div class="msg-time">${time}</div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+// ============================================================
+// PROGRESS BAR
+// ============================================================
+function startProgress() {
+  const fill = document.getElementById('progress-fill');
+  fill.className = 'progress-bar-fill indeterminate';
 }
 
-function applyToEditor(content) {
-  const decoded = content.replace(/\\n/g, '\n').replace(/\\'/g, "'");
-  document.getElementById('editor').value = decoded;
-  onEditorChange();
-  if (activeTab === 'preview') updatePreview();
-  showToast('✓ Applied to editor — review and commit when ready');
+function stopProgress(success) {
+  const fill = document.getElementById('progress-fill');
+  fill.className = 'progress-bar-fill';
+  fill.style.width = success ? '100%' : '0%';
+  setTimeout(() => { fill.style.width = '0%'; }, 800);
 }
 
-function handleChatKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
+// ============================================================
+// LOG
+// ============================================================
+function addLog(type, text) {
+  const body = document.getElementById('log-body');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${type}`;
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  entry.textContent = `[${time}] ${text}`;
+  body.appendChild(entry);
+  body.scrollTop = body.scrollHeight;
 }
 
-function autoResizeTextarea(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+function clearLog() {
+  document.getElementById('log-body').innerHTML = '';
+}
+
+// ============================================================
+// UTILITY
+// ============================================================
+function clearJSON() {
+  document.getElementById('json-input').value = '';
+  parsedCommit = null;
+  document.getElementById('status-dot').className = 'status-dot';
+  document.getElementById('btn-submit').disabled = true;
+  renderPreview(null);
 }
 
 // ============================================================
 // UI TOGGLES
 // ============================================================
 let sidebarOpen = true;
-let chatOpen = true;
-
-function toggleChat() {
-  chatOpen = !chatOpen;
-  const panel = document.getElementById('chat-panel');
-  const isMobile = window.innerWidth <= 768;
-  if (isMobile) {
-    panel.classList.toggle('open', chatOpen);
-    panel.classList.toggle('collapsed', !chatOpen);
-    document.getElementById('overlay-bg').classList.toggle('show', chatOpen);
-  } else {
-    panel.classList.toggle('collapsed', !chatOpen);
-  }
-}
+let previewOpen = true;
 
 document.getElementById('btn-toggle-sidebar').onclick = () => {
   sidebarOpen = !sidebarOpen;
@@ -1128,21 +921,32 @@ document.getElementById('btn-toggle-sidebar').onclick = () => {
   const isMobile = window.innerWidth <= 768;
   if (isMobile) {
     sidebar.classList.toggle('open', sidebarOpen);
-    sidebar.classList.toggle('collapsed', !sidebarOpen);
     document.getElementById('overlay-bg').classList.toggle('show', sidebarOpen);
   } else {
     sidebar.classList.toggle('collapsed', !sidebarOpen);
   }
 };
 
-document.getElementById('btn-toggle-chat').onclick = toggleChat;
+document.getElementById('btn-toggle-preview').onclick = () => {
+  previewOpen = !previewOpen;
+  const panel = document.getElementById('preview-panel');
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    panel.classList.toggle('open', previewOpen);
+    document.getElementById('overlay-bg').classList.toggle('show', previewOpen);
+  } else {
+    panel.classList.toggle('collapsed', !previewOpen);
+  }
+};
+
 document.getElementById('btn-settings').onclick = openSettings;
+document.getElementById('btn-refresh').onclick = loadFileTree;
 
 function closeOverlays() {
   document.getElementById('overlay-bg').classList.remove('show');
   document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('chat-panel').classList.remove('open');
-  sidebarOpen = false; chatOpen = false;
+  document.getElementById('preview-panel').classList.remove('open');
+  sidebarOpen = false; previewOpen = false;
 }
 
 // ============================================================
