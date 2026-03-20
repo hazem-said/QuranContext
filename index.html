@@ -62,7 +62,7 @@
   /* === HEADER === */
   header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px;
+    padding: max(14px, env(safe-area-inset-top)) 20px 14px;
     background: rgba(10,10,8,0.85);
     border-bottom: 1px solid rgba(201,168,76,0.25);
     backdrop-filter: blur(12px);
@@ -474,6 +474,18 @@
 <!-- Overlay for mobile -->
 <div class="overlay-bg" id="overlay-bg" onclick="closeOverlays()"></div>
 
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:12px;">✓</div>
+    <h2 style="color:#6ecf9a;">Commit Successful</h2>
+    <p id="success-modal-text" style="margin:12px 0 24px;font-size:14px;color:rgba(245,240,232,0.6);"></p>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn-primary" style="background:#2d6b45;min-width:100px;" onclick="closeSuccessModal()">OK</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
@@ -841,9 +853,12 @@ async function submitCommit() {
     });
 
     addLog('success', `✓ Committed: ${newCommit.sha.slice(0, 7)} — ${commit.message}`);
-    showToast(`✓ Committed ${newCommit.sha.slice(0, 7)} successfully!`);
     stopProgress(true);
-    clearJSON();
+
+    // Show success modal — clearing happens when user presses OK
+    document.getElementById('success-modal-text').textContent =
+      `${newCommit.sha.slice(0, 7)} — ${commit.message}`;
+    document.getElementById('success-modal').classList.add('open');
 
     // Refresh file tree
     await loadFileTree();
@@ -902,6 +917,11 @@ function clearLog() {
 // ============================================================
 // UTILITY
 // ============================================================
+function closeSuccessModal() {
+  document.getElementById('success-modal').classList.remove('open');
+  clearJSON();
+}
+
 function clearJSON() {
   document.getElementById('json-input').value = '';
   parsedCommit = null;
