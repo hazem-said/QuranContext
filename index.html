@@ -843,6 +843,7 @@ async function submitCommit() {
     addLog('success', `✓ Committed: ${newCommit.sha.slice(0, 7)} — ${commit.message}`);
     showToast(`✓ Committed ${newCommit.sha.slice(0, 7)} successfully!`);
     stopProgress(true);
+    clearJSON();
 
     // Refresh file tree
     await loadFileTree();
